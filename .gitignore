@@ -1,0 +1,17 @@
+# Môi trường 
+venv/
+env/
+.env
+
+# Cache và các file tạm của Python
+__pycache__/
+*.py[cod]
+
+# Dữ liệu của AI
+data/vectorstore/
+data/raw/
+models/
+
+# File thông tin cá nhân/cấu hình
+.env
+.DS_Store

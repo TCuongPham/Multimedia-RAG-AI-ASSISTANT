@@ -1,0 +1,8 @@
+langchain
+langchain-community
+langchain-chroma
+docling
+yt-dlp
+faster-whisper
+streamlit
+python-dotenv
