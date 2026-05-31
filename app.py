@@ -1,5 +1,8 @@
-import streamlit as st
 import os
+# Thiết lập cấu hình protobuf để sửa lỗi tương thích phiên bản (TypeError: Descriptors cannot be created directly)
+os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+
+import streamlit as st
 import tempfile
 from dotenv import load_dotenv
 
