@@ -1,0 +1,7 @@
+{
+    "python.defaultInterpreterPath": "C:/ProgramData/anaconda3/python.exe",
+    "python.analysis.extraPaths": [
+        "./venv/Lib/site-packages",
+        "."
+    ]
+}

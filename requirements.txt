@@ -1,4 +1,5 @@
 langchain
+langchain_google_genai
 langchain-community
 langchain-chroma
 docling
@@ -6,3 +7,6 @@ yt-dlp
 faster-whisper
 streamlit
 python-dotenv
+youtube-transcript-api
+sentence-transformers
+langgraph
