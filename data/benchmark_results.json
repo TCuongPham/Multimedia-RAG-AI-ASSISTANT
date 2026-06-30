@@ -1,0 +1,261 @@
+{
+    "timestamp": "2026-06-13 22:23:18",
+    "config_comparison": {
+        "with_reranker": {
+            "ragas_metrics": {
+                "faithfulness": 0.0,
+                "answer_relevance": 0.0,
+                "context_precision": 0.0,
+                "context_recall": 0.0
+            },
+            "detailed_queries": [
+                {
+                    "question": "Retriever trong kiến trúc RAG đóng vai trò quan trọng như thế nào?",
+                    "answer": "Trong kiến trúc RAG (Retrieval-Augmented Generation), Retriever đóng vai trò vô cùng quan trọng vì nó hỗ trợ mô hình ngôn ngữ lớn (LLM) giảm thiểu hiện tượng ảo tưởng (hallucination) [TÀI LIỆU KHẢO SÁT 1, Trang 10]. Cụ thể, Retriever thực hiện điều này bằng cách cung cấp cho LLM các thông tin thực tế đã được trích dẫn chính xác từ tài liệu nguồn để làm cơ sở cho việc sinh câu trả lời [TÀI LIỆU KHẢO SÁT 1, Trang 10].",
+                    "retrieved_sources": [
+                        "sach_giao_trinh_rag.pdf",
+                        "docling.pdf",
+                        "docling.pdf"
+                    ],
+                    "latency": {
+                        "retrieval": 0.5842552999999953,
+                        "reranking": 2.7863870000001043,
+                        "ttft": 0.8211567000000741,
+                        "generation": 1.163970000000063,
+                        "total": 4.534612300000163
+                    },
+                    "token_usage": {
+                        "input_tokens": 786,
+                        "output_tokens": 129
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1325.3046875,
+                        "gpu_mb": 0.0
+                    }
+                },
+                {
+                    "question": "Kiến trúc RAG (Retrieval-Augmented Generation) là gì?",
+                    "answer": "Kiến trúc RAG (Retrieval-Augmented Generation) là một kỹ thuật đột phá trong lĩnh vực trí tuệ nhân tạo (AI) [Nguồn: sach_giao_trinh_rag.pdf, Trang: 10].\n\nCơ chế hoạt động của RAG bao gồm việc kết hợp hai thành phần chính:\n*   **Retriever (Bộ truy xuất):** Đóng vai trò quan trọng trong việc truy xuất thông tin từ kho cơ sở dữ liệu vector [Nguồn: sach_giao_trinh_rag.pdf, Trang: 10]. Thành phần này giúp giảm thiểu hiện tượng ảo tưởng (hallucination) của mô hình ngôn ngữ lớn (LLM) bằng cách cung cấp các thông tin thực tế được trích dẫn chính xác từ tài liệu nguồn [Nguồn: sach_giao_trinh_rag.pdf, Trang: 10].\n*   **Generator (LLM):** Sử dụng các thông tin đã được truy xuất để sinh ra câu trả lời dựa trên ngữ cảnh đó [Nguồn: sach_giao_trinh_rag.pdf, Trang: 10].\n\nTrong bối cảnh hiện nay, việc tận dụng nội dung phong phú từ các tài liệu PDF thông qua mô hình RAG đã trở nên vô cùng phổ biến và quan trọng [Nguồn: docling.pdf, Trang: 1]. Để hỗ trợ cho các mô hình này, các công cụ như Docling và gói mã nguồn mở \"quackling\" đã được phát triển nhằm tối ưu hóa việc nhúng vector (vector embedding) và phân đoạn tài liệu (chunking), đồng thời tích hợp mượt mà với các khung làm việc LLM như LlamaIndex [Nguồn: docling.pdf, Trang: 5].",
+                    "retrieved_sources": [
+                        "sach_giao_trinh_rag.pdf",
+                        "docling.pdf",
+                        "docling.pdf"
+                    ],
+                    "latency": {
+                        "retrieval": 0.37851049999994757,
+                        "reranking": 3.6801585999999133,
+                        "ttft": 0.6458419000000504,
+                        "generation": 1.6119478000000527,
+                        "total": 5.670616899999914
+                    },
+                    "token_usage": {
+                        "input_tokens": 786,
+                        "output_tokens": 374
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1343.55859375,
+                        "gpu_mb": 0.0
+                    }
+                },
+                {
+                    "question": "Các bước để kết nối ChromaDB với Google Gemini API là gì?",
+                    "answer": "Để kết nối và sử dụng Google Gemini API với cơ sở dữ liệu vector ChromaDB, bạn cần thực hiện các bước sau:\n\n1. **Cài đặt thư viện:** Bạn cần cài đặt thư viện `langchain-google-genai` để hỗ trợ tích hợp [TÀI LIỆU KHẢO SÁT 1, 08:45].\n2. **Cấu hình API Key:** Bạn cần truyền API Key của Google Gemini vào biến môi trường [TÀI LIỆU KHẢO SÁT 1, 08:45].\n3. **Tạo và lưu trữ:** Sau khi hoàn tất cấu hình, bạn có thể sử dụng Gemini API để tạo các vector nhúng (embedding) và lưu trữ trực tiếp các dữ liệu này vào cơ sở dữ liệu vector ChromaDB để phục vụ cho việc truy xuất thông tin nhanh chóng trong các ứng dụng chatbot [TÀI LIỆU KHẢO SÁT 1, 08:45].",
+                    "retrieved_sources": [
+                        "Video Học Gemini API từ Cơ Bản",
+                        "lec1",
+                        "lec1"
+                    ],
+                    "latency": {
+                        "retrieval": 0.4984693999999763,
+                        "reranking": 2.8829299000001356,
+                        "ttft": 6.429172999999992,
+                        "generation": 6.997322799999893,
+                        "total": 10.378722100000005
+                    },
+                    "token_usage": {
+                        "input_tokens": 894,
+                        "output_tokens": 213
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1340.28125,
+                        "gpu_mb": 0.0
+                    }
+                },
+                {
+                    "question": "Cần cài đặt thư viện nào để sử dụng Google Gemini API tạo vector nhúng?",
+                    "answer": "Để sử dụng Google Gemini API nhằm tạo vector nhúng (embedding), bạn cần cài đặt thư viện `langchain-google-genai` [Nguồn: Video Học Gemini API từ Cơ Bản, Mốc thời gian: [08:45]].",
+                    "retrieved_sources": [
+                        "Video Học Gemini API từ Cơ Bản",
+                        "lec1",
+                        "lec2"
+                    ],
+                    "latency": {
+                        "retrieval": 0.5607201000000259,
+                        "reranking": 3.151219100000162,
+                        "ttft": 0.8853045000000748,
+                        "generation": 0.9700929000000542,
+                        "total": 4.682032100000242
+                    },
+                    "token_usage": {
+                        "input_tokens": 919,
+                        "output_tokens": 53
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1338.1875,
+                        "gpu_mb": 0.0
+                    }
+                },
+                {
+                    "question": "Hướng dẫn tôi cách nấu món phở bò Hà Nội chuẩn vị?",
+                    "answer": "❌ Rất tiếc, tôi không tìm thấy tài liệu phù hợp trong cơ sở dữ liệu để trả lời câu hỏi này.",
+                    "retrieved_sources": [],
+                    "latency": {
+                        "retrieval": 0.7824031000000105,
+                        "reranking": 2.9739307999998346,
+                        "ttft": 0.0,
+                        "generation": 0.0,
+                        "total": 3.756333899999845
+                    },
+                    "token_usage": {
+                        "input_tokens": 14,
+                        "output_tokens": 26
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1407.0859375,
+                        "gpu_mb": 0.0
+                    }
+                }
+            ]
+        },
+        "without_reranker": {
+            "ragas_metrics": {
+                "faithfulness": 0.0,
+                "answer_relevance": 0.0,
+                "context_precision": 0.0,
+                "context_recall": 0.0
+            },
+            "detailed_queries": [
+                {
+                    "question": "Retriever trong kiến trúc RAG đóng vai trò quan trọng như thế nào?",
+                    "answer": "Trong kiến trúc RAG (Retrieval-Augmented Generation), Retriever đóng vai trò vô cùng quan trọng vì nó giúp mô hình ngôn ngữ lớn (LLM) giảm thiểu hiện tượng ảo tưởng (hallucination) [TÀI LIỆU KHẢO SÁT 1, Trang 10]. Cụ thể, Retriever thực hiện điều này bằng cách cung cấp cho LLM những thông tin thực tế được trích dẫn chính xác từ tài liệu nguồn để làm cơ sở cho việc sinh câu trả lời [TÀI LIỆU KHẢO SÁT 1, Trang 10].",
+                    "retrieved_sources": [
+                        "sach_giao_trinh_rag.pdf",
+                        "docling.pdf",
+                        "docling.pdf"
+                    ],
+                    "latency": {
+                        "retrieval": 0.37835949999998775,
+                        "reranking": 0.0,
+                        "ttft": 0.8077898999999888,
+                        "generation": 1.175887899999907,
+                        "total": 1.5542473999998947
+                    },
+                    "token_usage": {
+                        "input_tokens": 786,
+                        "output_tokens": 127
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1378.18359375,
+                        "gpu_mb": 0.0
+                    }
+                },
+                {
+                    "question": "Kiến trúc RAG (Retrieval-Augmented Generation) là gì?",
+                    "answer": "Kiến trúc RAG (Retrieval-Augmented Generation) là một kỹ thuật đột phá trong lĩnh vực trí tuệ nhân tạo (AI) [Nguồn: sach_giao_trinh_rag.pdf, Trang: 10].\n\nCơ chế hoạt động của RAG bao gồm việc kết hợp hai thành phần chính:\n*   **Retriever (Bộ truy xuất):** Có nhiệm vụ truy xuất thông tin từ kho cơ sở dữ liệu vector [Nguồn: sach_giao_trinh_rag.pdf, Trang: 10]. Thành phần này đóng vai trò quan trọng trong việc giảm thiểu hiện tượng ảo tưởng (hallucination) của mô hình ngôn ngữ lớn (LLM) bằng cách cung cấp các thông tin thực tế được trích dẫn chính xác từ tài liệu nguồn [Nguồn: sach_giao_trinh_rag.pdf, Trang: 10].\n*   **Generator (LLM):** Sử dụng thông tin đã được truy xuất để sinh ra câu trả lời dựa trên ngữ cảnh đó [Nguồn: sach_giao_trinh_rag.pdf, Trang: 10].\n\nTrong bối cảnh hiện nay, việc tận dụng nội dung phong phú từ các tài liệu PDF thông qua mô hình RAG đã trở nên vô cùng quan trọng [Nguồn: docling.pdf, Trang: 1]. Các công cụ như Docling và gói mã nguồn mở \"quackling\" có thể hỗ trợ tối ưu hóa quá trình này bằng cách chuyển đổi tài liệu sang định dạng máy có thể xử lý được, từ đó hỗ trợ việc tạo vector nhúng (embedding) và phân đoạn (chunking) dữ liệu một cách hiệu quả cho các ứng dụng RAG [Nguồn: docling.pdf, Trang: 5].",
+                    "retrieved_sources": [
+                        "sach_giao_trinh_rag.pdf",
+                        "docling.pdf",
+                        "docling.pdf"
+                    ],
+                    "latency": {
+                        "retrieval": 0.39062810000018544,
+                        "reranking": 0.0,
+                        "ttft": 1.3882472000000234,
+                        "generation": 1.9250528000000031,
+                        "total": 2.3156809000001886
+                    },
+                    "token_usage": {
+                        "input_tokens": 786,
+                        "output_tokens": 376
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1378.5546875,
+                        "gpu_mb": 0.0
+                    }
+                },
+                {
+                    "question": "Các bước để kết nối ChromaDB với Google Gemini API là gì?",
+                    "answer": "Để kết nối và sử dụng Google Gemini API với cơ sở dữ liệu vector ChromaDB, bạn cần thực hiện các bước sau:\n\n1. **Cài đặt thư viện:** Bạn cần cài đặt thư viện `langchain-google-genai` để hỗ trợ việc tích hợp [TÀI LIỆU KHẢO SÁT 1, 08:45].\n2. **Cấu hình API Key:** Bạn cần truyền API Key của mình vào biến môi trường để xác thực quyền truy cập [TÀI LIỆU KHẢO SÁT 1, 08:45].\n3. **Tạo và lưu trữ:** Sau khi hoàn tất cấu hình, bạn có thể sử dụng Gemini API để tạo các vector nhúng (embedding) và lưu trữ trực tiếp các dữ liệu này vào cơ sở dữ liệu ChromaDB nhằm phục vụ cho việc truy xuất thông tin nhanh chóng trong các ứng dụng chatbot [TÀI LIỆU KHẢO SÁT 1, 08:45].",
+                    "retrieved_sources": [
+                        "Video Học Gemini API từ Cơ Bản",
+                        "lec1",
+                        "lec1"
+                    ],
+                    "latency": {
+                        "retrieval": 0.3686875000000782,
+                        "reranking": 0.0,
+                        "ttft": 0.48126380000007885,
+                        "generation": 1.0471094000001813,
+                        "total": 1.4157969000002595
+                    },
+                    "token_usage": {
+                        "input_tokens": 863,
+                        "output_tokens": 218
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1378.7109375,
+                        "gpu_mb": 0.0
+                    }
+                },
+                {
+                    "question": "Cần cài đặt thư viện nào để sử dụng Google Gemini API tạo vector nhúng?",
+                    "answer": "Để sử dụng Google Gemini API nhằm tạo vector nhúng (embedding), bạn cần cài đặt thư viện `langchain-google-genai` [Nguồn: Tài liệu khảo sát 1, Mốc thời gian: 08:45]. Sau khi cài đặt, bạn cần truyền API Key vào biến môi trường để bắt đầu sử dụng [Nguồn: Tài liệu khảo sát 1, Mốc thời gian: 08:45].",
+                    "retrieved_sources": [
+                        "Video Học Gemini API từ Cơ Bản",
+                        "lec1",
+                        "lec1"
+                    ],
+                    "latency": {
+                        "retrieval": 0.38399839999988217,
+                        "reranking": 0.0,
+                        "ttft": 1.8988274999999248,
+                        "generation": 2.0762402999998812,
+                        "total": 2.4602386999997634
+                    },
+                    "token_usage": {
+                        "input_tokens": 875,
+                        "output_tokens": 94
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1378.73828125,
+                        "gpu_mb": 0.0
+                    }
+                },
+                {
+                    "question": "Hướng dẫn tôi cách nấu món phở bò Hà Nội chuẩn vị?",
+                    "answer": "Rất tiếc, tôi không thể cung cấp hướng dẫn nấu món phở bò Hà Nội vì thông tin này không có trong các tài liệu khảo sát được cung cấp [Nguồn: cs229-notes1.pdf, Trang 14, 20; sach_giao_trinh_rag.pdf, Trang 10].\n\nCác tài liệu hiện có chỉ tập trung vào phương pháp Newton trong toán học và kiến trúc RAG trong trí tuệ nhân tạo [Nguồn: cs229-notes1.pdf, Trang 20; sach_giao_trinh_rag.pdf, Trang 10]. Theo nguyên tắc hoạt động của hệ thống, tôi chỉ có thể trả lời dựa trên các nguồn dữ liệu đã được cung cấp để đảm bảo tính chính xác và giảm thiểu hiện tượng ảo tưởng thông tin [Nguồn: sach_giao_trinh_rag.pdf, Trang 10].",
+                    "retrieved_sources": [
+                        "cs229-notes1.pdf",
+                        "cs229-notes1.pdf",
+                        "sach_giao_trinh_rag.pdf"
+                    ],
+                    "latency": {
+                        "retrieval": 0.784486300000026,
+                        "reranking": 0.0,
+                        "ttft": 0.6704291999999441,
+                        "generation": 1.238094399999909,
+                        "total": 2.022580699999935
+                    },
+                    "token_usage": {
+                        "input_tokens": 766,
+                        "output_tokens": 198
+                    },
+                    "peak_resources": {
+                        "ram_mb": 1378.84765625,
+                        "gpu_mb": 0.0
+                    }
+                }
+            ]
+        }
+    }
+}

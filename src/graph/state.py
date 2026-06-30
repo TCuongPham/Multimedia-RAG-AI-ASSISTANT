@@ -11,3 +11,4 @@ class RAGState(TypedDict):
     retrieved_docs: List[Document]   # Danh sách các tài liệu thô được quét từ Vector DB (ChromaDB)
     reranked_docs: List[Document]    # Danh sách các tài liệu tinh tuyển sau khi qua BGE Reranker
     response: str                     # Câu trả lời cuối cùng từ LLM Gemini kèm trích dẫn
+    matched_source_name: Optional[str] # Tên tài liệu tự động khớp từ câu hỏi

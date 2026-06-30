@@ -10,3 +10,9 @@ python-dotenv
 youtube-transcript-api
 sentence-transformers
 langgraph
+pandas
+psutil
+torch
+ragas
+datasets
+google-genai

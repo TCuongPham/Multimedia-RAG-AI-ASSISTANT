@@ -1,7 +1,7 @@
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from src.graph.state import RAGState
-from src.retrieval.vector_db import VectorDBManager
+from src.retrieval.vector_db import get_vector_db_singleton
 from src.retrieval.reranker import BGEReranker
 
 # Khởi tạo các biến dịch vụ toàn cục theo cơ chế Lazy Load (chỉ tải khi chạy node)
@@ -13,12 +13,12 @@ def get_services():
     """Tải chậm các dịch vụ để tránh làm chậm hệ thống khi import"""
     global vector_db, reranker, llm
     if vector_db is None:
-        vector_db = VectorDBManager()
+        vector_db = get_vector_db_singleton()
     if reranker is None:
         reranker = BGEReranker()
     if llm is None:
-        # Cấu hình Gemini 2.5 Flash thế hệ mới nhất dùng cho QA theo đề xuất kế hoạch nâng cấp
-        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.2)
+        # Cấu hình Gemini 3.1 Flash Lite có giới hạn Free Tier tốt nhất (15 RPM / 500 RPD theo bảng giới hạn của bạn)
+        llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite", temperature=0.2)
     return vector_db, reranker, llm
 
 def retrieve_node(state: RAGState) -> RAGState:
@@ -32,14 +32,56 @@ def retrieve_node(state: RAGState) -> RAGState:
     query = state["query"]
     source_type = state.get("source_type")
     
-    # TRƯỜNG HỢP 1: Người dùng chủ động chọn lọc 1 nguồn cụ thể (PDF hoặc YT)
+    # Tự động nhận diện tài liệu theo tên từ danh sách nguồn đã có trong CSDL
+    matched_source_name = None
+    best_match_len = 0
+    try:
+        sources = db.get_all_sources()
+        for src in sources:
+            name = src["source_name"]
+            # Thử cả tên đầy đủ và tên không có phần mở rộng (ví dụ: docling thay vì docling.pdf)
+            name_variants = [name]
+            name_no_ext, ext = os.path.splitext(name)
+            if ext:
+                name_variants.append(name_no_ext)
+                
+            # Đối chiếu thêm video_id nếu có
+            vid = src.get("video_id")
+            if vid:
+                name_variants.append(vid)
+                
+            for variant in name_variants:
+                # Tránh khớp những ký tự đơn lẻ quá ngắn (ví dụ: file tên là "a.pdf" thì không tự khớp chữ "a" trong query)
+                if len(variant) >= 3 and variant.lower() in query.lower():
+                    if len(variant) > best_match_len:
+                        best_match_len = len(variant)
+                        matched_source_name = name
+    except Exception as e:
+        print(f"⚠️ [NODE: RETRIEVE] Lỗi khi nhận diện tên tài liệu tự động: {str(e)}")
+
+    if matched_source_name:
+        print(f"🎯 [Auto-Filter] Phát hiện query đề cập đến tài liệu: '{matched_source_name}'. Tự động khóa tìm kiếm vào tài liệu này.")
+        
+    # TRƯỜNG HỢP 1: Người dùng chủ động chọn lọc 1 nguồn cụ thể (PDF hoặc YT) từ giao diện
     if source_type is not None:
-        docs = db.search(query, source_type=source_type, k=8)
-        print(f"📥 Đã tìm thấy {len(docs)} mảnh thô từ nguồn lọc [{source_type.upper()}].")
-        return {"retrieved_docs": docs}
+        docs = db.search(query, source_type=source_type, source_name=matched_source_name, k=8)
+        print(f"📥 Đã tìm thấy {len(docs)} mảnh thô từ nguồn lọc [{source_type.upper()}] (Tên: {matched_source_name or 'Tất cả'}).")
+        return {"retrieved_docs": docs, "matched_source_name": matched_source_name}
         
     # TRƯỜNG HỢP 2: Tìm kiếm kết hợp (Trộn lẫn cả YT và PDF)
     else:
+        # Nếu đã tự động lọc trúng một tài liệu cụ thể
+        if matched_source_name:
+            # Xác định loại của tài liệu khớp
+            matched_type = None
+            for src in sources:
+                if src["source_name"] == matched_source_name:
+                    matched_type = src["source_type"]
+                    break
+            docs = db.search(query, source_type=matched_type, source_name=matched_source_name, k=8)
+            print(f"📥 Đã tìm thấy {len(docs)} mảnh thô từ tài liệu tự lọc '{matched_source_name}'.")
+            return {"retrieved_docs": docs, "matched_source_name": matched_source_name}
+            
         print("🔄Luồng trộn lẫn: Đang lấy độc lập dữ liệu từ cả PDF và YouTube...")
         # Lấy 5 mảnh tốt nhất từ PDF
         pdf_docs = db.search(query, source_type="pdf", k=5)
@@ -50,7 +92,7 @@ def retrieve_node(state: RAGState) -> RAGState:
         all_docs = pdf_docs + yt_docs
         print(f"📥 Thu hoạch tổng cộng {len(all_docs)} mảnh thô (PDF: {len(pdf_docs)}, YT: {len(yt_docs)}).")
         
-        return {"retrieved_docs": all_docs}
+        return {"retrieved_docs": all_docs, "matched_source_name": None}
 
 def rerank_node(state: RAGState) -> RAGState:
     """
@@ -74,9 +116,19 @@ def rerank_node(state: RAGState) -> RAGState:
     best_doc_content = sorted_docs[0].page_content
     best_score = float(ranker.model.predict([query, best_doc_content]))
     
-    # 3. Kiểm tra ngưỡng điểm chặn nhiễu
+    # 3. Kiểm tra ngưỡng điểm chặn nhiễu (Bỏ qua hoặc hạ thấp nếu người dùng chủ động chọn/khớp đúng tên tài liệu)
+    matched_source_name = state.get("matched_source_name")
+    source_type = state.get("source_type")
+    
+    # Nếu người dùng đã chỉ định hoặc khớp đúng tài liệu cụ thể, ta không lọc bỏ "lạc đề" vì họ đang cố tình hỏi tài liệu này
+    is_explicit_query = (matched_source_name is not None) or (source_type is not None)
+    
     SCORE_THRESHOLD = 0.35
-    if best_score < SCORE_THRESHOLD:
+    if is_explicit_query:
+        # Cho phép vượt ngưỡng lọc nhiễu vì đây là tài liệu người dùng yêu cầu đích danh
+        final_docs = sorted_docs[:3]
+        print(f"🎯 [Explicit Query] Bỏ qua bộ lọc lạc đề (Điểm tốt nhất: {best_score:.4f}). Chấp nhận cấp {len(final_docs)} mảnh từ tài liệu yêu cầu cho LLM.")
+    elif best_score < SCORE_THRESHOLD:
         print(f"Điểm của mảnh tốt nhất ({best_score:.4f}) < {SCORE_THRESHOLD} -> Câu hỏi LẠC ĐỀ.")
         final_docs = [] # Trả về rỗng để kích hoạt chế độ từ chối ở Node Generate
     else:
@@ -89,9 +141,9 @@ def rerank_node(state: RAGState) -> RAGState:
 def generate_node(state: RAGState) -> RAGState:
     """
     Node 3: Sinh câu trả lời (LLM) kèm cơ chế trích dẫn nguồn chuẩn xác
-    Sử dụng Gemini 2.5 Flash để tổng hợp câu trả lời tiếng Việt có dẫn số trang/timestamp
+    Sử dụng Gemini 3.1 Flash Lite để tổng hợp câu trả lời tiếng Việt có dẫn số trang/timestamp
     """
-    print("\n--- [NODE: GENERATE] Đang sinh câu trả lời bằng Gemini 2.5 Flash... ---")
+    print("\n--- [NODE: GENERATE] Đang sinh câu trả lời bằng Gemini 3.1 Flash Lite... ---")
     _, _, model = get_services()
     
     query = state["query"]
@@ -143,4 +195,16 @@ def generate_node(state: RAGState) -> RAGState:
     
     response = model.invoke(prompt)
     
-    return {"response": response.content}
+    # Đảm bảo chỉ lấy chuỗi text thuần túy
+    response_text = ""
+    if isinstance(response.content, list):
+        # Nếu là dạng list [ {"type": "text", "text": "..."} ]
+        for part in response.content:
+            if isinstance(part, dict) and "text" in part:
+                response_text += part["text"]
+            elif isinstance(part, str):
+                response_text += part
+    else:
+        response_text = str(response.content)
+        
+    return {"response": response_text}
