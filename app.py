@@ -635,10 +635,10 @@ else:
     with st.sidebar.expander("Thông tin Benchmark", expanded=True):
         st.markdown("""
         <div style='font-size: 0.85rem; color: #cbd5e1;'>
-        Hệ thống đánh giá hiệu năng và chất lượng RAG toàn diện:<br><br>
-        1. <b>Thời gian phản hồi (Latency)</b>: Đo đạc chi tiết tốc độ truy xuất vector, tốc độ xếp hạng lại (Reranking) và tốc độ sinh (TTFT, Total Gen).<br><br>
+        Hệ thống đánh giá hiệu năng và chất lượng RAG:<br><br>
+        1. <b>Thời gian phản hồi (Latency)</b>: Đo chi tiết tốc độ truy xuất vector, tốc độ xếp hạng và tốc độ sinh.<br><br>
         2. <b>Tài nguyên & Chi phí (Resource)</b>: Kiểm tra số lượng input/output tokens và đo Peak RAM/GPU khi chạy Docling & Faster-Whisper.<br><br>
-        3. <b>Chất lượng RAG (Ragas)</b>: Đánh giá độ trung thực (Faithfulness) và độ liên quan (Answer Relevance) bằng mô hình giám khảo.
+        3. <b>Chất lượng RAG (Ragas)</b>: Đánh giá độ trung thực và độ liên quan.
         </div>
         """, unsafe_allow_html=True)
 
@@ -802,7 +802,7 @@ else:
     # 1. Pipeline Benchmark
     with st.expander("1. RAG Pipeline Benchmark (BGE Reranker)", expanded=True):
         st.markdown("""
-        Đánh giá chất lượng phản hồi và thời gian xử lý của hệ thống RAG trên bộ dữ liệu kiểm thử (5 câu hỏi thực tế).
+        Đánh giá chất lượng phản hồi và thời gian xử lý của hệ thống RAG trên bộ dữ liệu kiểm thử.
         """)
         
         # Hiển thị Golden Dataset
@@ -846,7 +846,7 @@ else:
                 peak_cpu = max(r["peak_cpu"] for r in results_with)
                 
                 # Bảng số liệu chi tiết
-                st.markdown("### 📊 Chi tiết các chỉ số trung bình")
+                st.markdown("### 📊 Các chỉ số trung bình")
                 summary_data = {
                     "Chỉ số đo lường": [
                         "Retrieval Latency (ChromaDB search)",
@@ -860,7 +860,6 @@ else:
                         "CPU Peak tiêu thụ",
                         "Ragas Faithfulness (Độ trung thực)",
                         "Ragas Answer Relevancy (Độ liên quan)",
-                        "Ragas Context Precision (Độ chính xác ngữ cảnh)",
                         "Ragas Context Recall (Độ phủ ngữ cảnh)"
                     ],
                     "Giá trị": [
@@ -875,14 +874,13 @@ else:
                         f"{peak_cpu:.1f}%",
                         f"{ragas_with['faithfulness']:.4f}",
                         f"{ragas_with['answer_relevance']:.4f}",
-                        f"{ragas_with['context_precision']:.4f}",
                         f"{ragas_with['context_recall']:.4f}"
                     ]
                 }
                 st.table(pd.DataFrame(summary_data))
 
                 # Chi tiết từng câu hỏi
-                st.markdown("#### 💬 Phân tích chi tiết từng câu hỏi")
+                st.markdown("#### 💬 Chi tiết từng câu hỏi")
                 for i, rw in enumerate(results_with):
                     with st.expander(f"Q{i+1}: {rw['question']}", expanded=False):
                         st.markdown(f"**Trả lời:**\n{rw['answer']}")
@@ -898,7 +896,7 @@ else:
     # 2. Ingestion Resource Benchmark
     with st.expander("2. Ingestion Resource Benchmark (Docling & Faster-Whisper)", expanded=False):
         st.markdown("""
-        Đo đạc chính xác thời gian xử lý và **lượng RAM/GPU tiêu hao đỉnh điểm (Peak RAM/GPU)** khi chạy hai phân hệ nặng nhất trong hệ thống.
+        Đo thời gian xử lý và tài nguyên tiêu hao.
         """)
         
         col_doc, col_whis = st.columns(2)
@@ -909,7 +907,7 @@ else:
             pdf_files = [f for f in os.listdir("data/raw") if f.endswith(".pdf")] if os.path.exists("data/raw") else []
             default_pdf = "data/raw/cs229-notes1.pdf"
             
-            selected_pdf = st.selectbox("Chọn file PDF mẫu:", options=pdf_files if pdf_files else [default_pdf])
+            selected_pdf = st.selectbox("Chọn file PDF:", options=pdf_files if pdf_files else [default_pdf])
             pdf_full_path = os.path.join("data/raw", selected_pdf) if selected_pdf in pdf_files else selected_pdf
             
             if st.button("Chạy Benchmark", key="btn_docling_bench"):
@@ -932,7 +930,7 @@ else:
                             
         with col_whis:
             st.markdown("### 🎥 Trích xuất YouTube")
-            yt_url_test = st.text_input("YouTube URL cho benchmark:", value="https://www.youtube.com/watch?v=iNyUmbmQQZg")
+            yt_url_test = st.text_input("YouTube URL:", value="https://www.youtube.com/watch?v=iNyUmbmQQZg")
             
             if st.button("Chạy Benchmark", key="btn_whisper_bench"):
                 with st.spinner("⏳ Đang xử lý phân tích Video và đo tài nguyên..."):
